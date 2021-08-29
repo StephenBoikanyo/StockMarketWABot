@@ -3,14 +3,14 @@ import requests
 import json
 
 
-marketstack_key = os.environ.get('marketstack_key')
-api_url = 'https://api.marketstack.com/vi/'
+MARKETSTACK_KEY = os.environ.get('MARKETSTACK_KEY')
+api_url = 'http://api.marketstack.com/v1/'
 
 def  get_stock_price(stock_symbol):
     params = {
-        'access_key': marketstack_key
+        'access_key': MARKETSTACK_KEY
     }
-    end_point = ''.join([api_url,'tickers/',stock_symbol])
+    end_point = ''.join([api_url,'tickers/',stock_symbol,'/intraday/latest'])
     api_result = requests.get(end_point,params)
     json_result = json.loads(api_result.text)
     return  {

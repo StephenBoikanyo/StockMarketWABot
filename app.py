@@ -1,23 +1,21 @@
 from flask import Flask
-from flask import request
+from flask.globals import request
 from twilio.rest import Client
 from marketstack import get_stock_price
 import os 
 
 app = Flask(__name__)
 #Environment variables 
-twilio_id = os.environ.get('twilio_id')
-twilio_token = os.environ.get('twilio_token')
-twilio_client = Client(twilio_id,twilio_token)
-twilio_number = 'whatsapp:+14155238886'
+TWILIO_ID = os.environ.get('TWILIO_ID')
+TWILIO_TOKEN = os.environ.get('TWILIO_TOKEN')
+twilio_client = Client(TWILIO_TOKEN,TWILIO_ID)
+TWILIO_NUMBER = 'whatsapp:+14155238886'
 #Data from immutable object
-form_content = request.form
-sender_message  = form_content['Body']
-sender = form_content['From']
+
 #Sending a message back to user 
 def send_message(sender_message,sender):
-    client.messages.create(
-        from_= twilio_number,
+    twilio_client.messages.create(
+        from_= TWILIO_NUMBER,
         body = sender_message,
         to = sender
     )
@@ -38,10 +36,14 @@ def process_message(sender_message):
         response ='Please say Hi, HI or hi to get started'
     return response
 #first route to called when flast is run 
-@app.route('/',methods=['POST'])
+@app.route('/stockbot',methods=['POST'])
 def stockbot_response():
+    form_content = request.form
+    sender_message  = form_content['Body']
+    sender = form_content['From']
     response = process_message(sender_message)
     send_message(response,sender)
+    return 'OK' ,  200
 
 
 
